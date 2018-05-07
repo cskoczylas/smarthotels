@@ -1,0 +1,35 @@
+{
+    "hotel_name" : "UConn Hotel",
+    "hotel_image" : null,
+    "errors": [{
+       "message" : "The system is broken." 
+    }, {
+        "pheripheral": "54f52150-17cd-4752-9468-25c2819712b6",
+        "message" : "The Thermostat is not connected, maintenance has been contacted."
+    }],
+    "user": {
+        "uuid" : "875900cf-84b3-4a3d-a32e-a688c79b4a51",
+        "name" : "John Doe"
+    },
+    "rooms" : [{
+        "uuid" : "ba8d689d-900b-47ab-8b54-76a8d65d4252",
+        "name" : "Presidential Suite",
+        "number" : "221B",
+        "floor" : "22",
+        "pheripherals" : [{
+            "uuid" : "dfb4b8b7-9476-4284-8821-08f93f9d8445",
+            "name" : "Lights",
+            "type" : "lightBinary",
+            "active" : true,
+            "power" : false,
+            "state" : 0
+        }, {
+            "uuid" : "54f52150-17cd-4752-9468-25c2819712b6",
+            "name" : "Thermostat",
+            "type" : "thermostat",
+            "power" : true,
+            "active" : true,
+            "state" : 72
+        }]
+    }]
+}

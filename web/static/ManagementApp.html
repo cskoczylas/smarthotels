@@ -1,0 +1,408 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="googlebot" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  <!-- <script type="text/javascript" src="/js/lib/dummy.js"></script> -->
+
+  
+
+  
+
+  
+
+  
+<!--     <link rel="stylesheet" type="text/css" href="/css/result-light.css"> -->
+  
+
+  
+
+  <style type="text/css">
+    th{
+  text-align: left;
+}
+
+table, th {
+    border: 1px solid black;
+    text-align: center;
+}
+
+td {
+    border: 1px solid black;
+    text-align: left;  
+}
+
+button {
+  width: 100%;
+  height: 100%;
+  background-color: white;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.column {
+  float: left;
+  width: 33%;
+}
+
+.gap {
+  float: left;
+  width: 10%;
+}
+
+.row:after{
+  
+}
+
+
+
+.modal-mask {
+  position: fixed;
+  z-index: 9998;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, .5);
+  display: table;
+  transition: opacity .3s ease;
+}
+
+.modal-wrapper {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.modal-container {
+  width: 300px;
+  margin: 0px auto;
+  padding: 40px 30px;
+  background-color: #fff;
+  border-radius: 2px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
+  transition: all .3s ease;
+
+}
+
+.modal-header h3 {
+  margin-top: 0;
+  color: #42b983;
+}
+
+.modal-body {
+  margin: 20px 0;
+}
+
+.modal-default-button {
+  float: right;
+  width: 30%;
+}
+
+/*
+ * The following styles are auto-applied to elements with
+ * transition="modal" when their visibility is toggled
+ * by Vue.js.
+ *
+ * You can easily play with the modal transition by editing
+ * these styles.
+ */
+
+.modal-enter {
+  opacity: 0;
+}
+
+.modal-leave-active {
+  opacity: 0;
+}
+
+.modal-enter .modal-container,
+.modal-leave-active .modal-container {
+  -webkit-transform: scale(1.1);
+  transform: scale(1.1);
+}
+  </style>
+
+  <title>SDP</title>
+
+  
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+window.onload=function(){
+
+Vue.component('modal', {
+  template: '#modal-template'
+})
+
+new Vue({
+  el: '#app',
+  data: {
+    rooms_heading : 'Rooms',
+    rooms: [
+    	{ number: 100, guest:'John Doe'},
+      { number: 101, guest: '(none)'},
+      { number: 102, guest: '(none)'},
+      { number: 200, guest: 'Brian Matuszak'}
+    ],
+    showModal: false,
+    modal: "",
+    cur_index: 0,
+    peripherals: [
+    	{number: 100, lights: 'On', tv: 'On', blinds: 'Up', thermostat: '70', camera: 'Online'},
+      {number: 101, lights: 'Off', tv: 'Off', blinds: 'Down', thermostat: '68', camera: 'Online'},
+      {number: 102, lights: 'Off', tv: 'Off', blinds: 'Down', thermostat: '70', camera: 'Online'},
+      {number: 200, lights: 'On', tv: 'On', blinds: 'Down', thermostat: '72', camera: 'Online'}
+    ],
+    roomService: [
+      {room: 200, name: 'Cheeseburger', time: '12:00', completed: false},
+      {room: 100, name: 'Spaghetti', time: '1:00', completed: false}    
+    ],
+    mRequests: [
+    	{room: 101, info: 'Change lightbulb', time: '3:00', completed: false},
+
+    ],
+    rs_query: '',
+    m_query: '',
+    room_query: ''
+  },
+  methods: {
+  	check_in: function(index) {
+    	this.rooms[index].status = 'Occupied'
+    },
+    check_out: function(index) {
+      this.rooms[index].status = 'Available'
+    },
+    view_peripherals: function(index) {
+			this.cur_index = index
+      this.showModal = true
+      this.modal = 'p'
+    },
+    view_guest: function(index) {
+    	this.cur_index = index
+      this.showModal = true
+      this.modal = 'g'
+    },
+    close_modal: function(){
+    	this.showModal = false
+      this.modal = ''
+    },
+    rs_matches: function(request){
+    	return request.room.toString().includes(this.rs_query) || request.name.toUpperCase().includes(this.rs_query.toUpperCase());
+    },
+    m_matches: function(request){
+    	return request.room.toString().includes(this.m_query) || request.info.toUpperCase().includes(this.m_query.toUpperCase());
+    },
+    room_matches: function(room){
+    	return room.number.toString().includes(this.room_query) || room.guest.toUpperCase().includes(this.room_query.toUpperCase());
+    },
+    mark_complete: function(request){
+    	request.completed = true
+    }
+  }
+  
+})
+
+}
+
+
+
+
+</script>
+
+  
+</head>
+
+<body>
+  <script src="https://unpkg.com/vue"></script>
+
+<div id="app">
+  <div class="row">
+    <div class="column">
+      <h3>Room Service</h3>    
+      <form id="search">
+        Search <input name="query" v-model="rs_query">
+      </form>
+      <table class="request_table">
+        <tr>
+          <th>Room</th>
+          <th>Name</th>
+          <th>Time</th>
+          <th>Status</th>
+        </tr>
+        <tr v-for="(request, index) in roomService" v-if="rs_matches(request) && !request.completed">
+          <td>{{request.room}}</td>
+          <td>{{request.name}}</td>
+          <td>{{request.time}}</td>
+          <td><button v-on:click="mark_complete(request)">Complete</button></td>
+        </tr>
+      </table>     
+    </div>
+    
+    
+    
+    <div class="column">
+      <h3>Maintenance</h3>
+      <form id="search">
+        Search <input name="query" v-model="m_query">
+      </form>
+      <table class="request_table">
+        <tr>
+          <th>Room</th>
+          <th>Description</th>
+          <th>Time</th>
+          <th>Status</th>
+        </tr>
+        <tr v-for="(request, index) in mRequests" v-if="m_matches(request) && !request.completed">
+          <td>{{request.room}}</td>
+          <td>{{request.info}}</td>
+          <td>{{request.time}}</td>
+          <td><button v-on:click="mark_complete(request)">Complete</button></td>
+        </tr>
+      </table>        
+    </div>
+    
+    
+    
+    <div class="column">
+        <h3>Rooms</h3>
+        <form id="search">
+          Search <input name="query" v-model="room_query">
+        </form>
+        <table class="room-table">
+          <tr>
+            <th>Room</th>
+            <th>Guest</th>
+            <th>Peripherals</th>
+          </tr>
+          <tr v-for="(room, index) in rooms" v-if="room_matches(room)">
+            <td>{{room.number}}</td>
+            <td><button v-on:click="view_guest(index)">{{room.guest}}</button></td>
+            <td><button v-on:click="view_peripherals(index)">View</button></td>
+          </tr>
+        </table>
+      
+    </div>
+    
+  </div>
+
+  
+
+  <modal v-if="showModal" @close="close_modal()">
+
+    <h3 slot="header">Room {{peripherals[cur_index].number}}</h3>
+    <table v-if="modal=='p'" slot="body">
+      <tr>
+        <th>Lights</th>
+        <th>TV</th>
+        <th>Blinds</th>
+        <th>Thermostat</th>
+        <th>Camera</th>
+      </tr>
+      <tr>
+        <td>{{peripherals[cur_index].lights}}</td>
+        <td>{{peripherals[cur_index].tv}}</td>
+        <td>{{peripherals[cur_index].blinds}}</td>
+        <td>{{peripherals[cur_index].thermostat}}</td>
+        <td>{{peripherals[cur_index].camera}}</td>
+      </tr>
+    </table>
+    <table v-else slot="body">
+      <tr>
+        <th>First</th>
+        <th>Last</th>
+        <th>Email</th>
+      </tr>
+      <tr>
+        
+      </tr>
+    </table>
+  </modal>
+</div>
+
+<script type="text/x-template" id="modal-template">
+  <transition name="modal">
+    <div class="modal-mask">
+      <div class="modal-wrapper">
+        <div class="modal-container">
+
+          <div class="modal-header">
+            <slot name="header">
+              default header
+            </slot>
+          </div>
+
+          <div class="modal-body">
+            <slot name="body">
+              default body
+            </slot>
+          </div>
+
+          <div class="modal-footer">
+            <slot name="footer">
+              
+              <button class="modal-default-button" @click="$emit('close')">
+                Close
+              </button>
+            </slot>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </transition>
+</script>
+
+  
+  <script>
+  // tell the embed parent frame the height of the content
+  if (window.parent && window.parent.parent){
+    window.parent.parent.postMessage(["resultsFrame", {
+      height: document.body.getBoundingClientRect().height,
+      slug: "dfxjt547"
+    }], "*")
+  }
+</script>
+
+</body>
+
+</html>
+

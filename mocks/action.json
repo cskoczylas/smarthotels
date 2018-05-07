@@ -1,0 +1,10 @@
+{
+    "pheripheral" : {
+        "uuid" : "54f52150-17cd-4752-9468-25c2819712b6",
+        "name" : "Thermostat",
+        "type" : "thermostat",
+        "power" : true,
+        "active" : true,
+        "state" : 68
+    }
+}

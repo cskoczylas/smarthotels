@@ -1,0 +1,28 @@
+version: '2'
+services:
+  postgres:
+    container_name: sdp-smarthotels-pg
+    hostname: sdp-smarthotels-pg
+    image: sdp-smarthotels-pg
+    build: postgres/
+    ports:
+      - "5432:5432"
+    volumes:
+      - psql-data:/var/lib/postgresql/data
+    expose:
+      - 5432
+    environment:
+      POSTGRES_USER: docker
+      POSTGRES_PASSWORD: docker
+  web:
+    container_name: sdp-smarthotels
+    hostname: sdp-smarthotels
+    image: sdp-smarthotels
+    build: web/
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+volumes:
+  psql-data:
+    driver: local

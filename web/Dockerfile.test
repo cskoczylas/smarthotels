@@ -1,0 +1,20 @@
+FROM ubuntu
+
+# Update APT repos
+RUN apt-get update --fix-missing
+
+# Postgresql library
+RUN apt-get install -y libpq-dev postgresql-client
+
+RUN apt-get install -y python3 python3-pip python3-dev
+RUN pip3 install --upgrade pip
+
+ADD requirements.txt /app/requirements.txt
+RUN pip install -r /app/requirements.txt
+
+ADD postgresLibrary.py /src/postgresLibrary.py
+ADD unitTests.py /src/unitTests.py
+
+WORKDIR /src
+
+CMD ["python3", "unitTests.py", "-v"]

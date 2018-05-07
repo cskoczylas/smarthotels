@@ -1,0 +1,8 @@
+sut:
+  build: web/
+  dockerfile: Dockerfile.test
+  links:
+    - postgres
+postgres:
+  build: postgres/
+  dockerfile: Dockerfile
